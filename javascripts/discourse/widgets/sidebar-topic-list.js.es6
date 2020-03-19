@@ -11,17 +11,18 @@ export default createWidget("sidebar-topic-list", {
   tagName: "div.sidebar-topic-list",
   buildKey: (attrs) => `sidebar-topic-list-${listKey(attrs)}`,
   
-  defaultState(attrs) {    
+  defaultState(attrs) {
     return {
-      recorded: null
+      recorded: null,
+      announcement: attrs.list.name === 'Announcements'
     };
   },  
   
   html(attrs, state) {
     const { list } = attrs;
-    const announcement = list.name === 'Announcements';
+    const { announcement } = state;
     const hasTopics = list.topics.length;
-    const titleLink = announcement && hasTopics ? list.topics[0].ad_url : list.url;
+    const titleLink = (announcement && hasTopics) ? list.topics[0].ad_url : list.url;
     
     let result = [
       h('h3', h('a', { attributes: { href: titleLink }}, list.name))
@@ -30,9 +31,7 @@ export default createWidget("sidebar-topic-list", {
     let topicList;
         
     if (hasTopics) {
-      console.log(listKey(attrs))
       if (state.recorded !== listKey(attrs)) {
-        console.log('recording: ', attrs.list.topics.map(t => [t.title, t.id]));
         this.recordAnalytics({
           topic_ids: attrs.list.topics.map(t => t.id)
         }, 'topics');
@@ -74,11 +73,9 @@ export default createWidget("sidebar-topic-list", {
   },
   
   clickTopic(topic) {
-    this.recordAnalytics({
-      topic_ids: [topic.id],
-      url: topic.url
-    }, 'click');
-    DiscourseUrl.routeTo(topic.url);
+    this.recordAnalytics({ topic_ids: [topic.id], url: topic.url }, 'click');
+    const url = this.state.announcement ? topic.ad_url : topic.url;
+    DiscourseUrl.routeTo(url);
   },
   
   recordAnalytics(data, type = null) {
