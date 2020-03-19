@@ -22,12 +22,11 @@ export default createWidget("sidebar-topic-list", {
     const { list } = attrs;
     const { announcement } = state;
     const hasTopics = list.topics.length;
-    const titleLink = (announcement && hasTopics) ? list.topics[0].ad_url : list.url;
     
     let result = [];
     
     if (!announcement) {
-      result.push(h('h3', h('a', { attributes: { href: titleLink }}, list.name)))
+      result.push(h('h3', h('a', { attributes: { href: `/${list.url}` }}, list.name)))
     }
     
     let topicList;
