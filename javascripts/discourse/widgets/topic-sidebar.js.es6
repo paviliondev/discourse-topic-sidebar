@@ -65,7 +65,7 @@ export default createWidget("topic-sidebar", {
     return this.store.findFiltered("topicList", {
       filter: list.url,
       params: {
-        status: 'open',
+        status: 'listed',
         per_page: list.max,
         no_definitions: true,
         random: true,
