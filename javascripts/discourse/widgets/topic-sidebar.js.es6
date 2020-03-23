@@ -78,6 +78,7 @@ export default createWidget("topic-sidebar", {
       if (result.topics) {
         state.lists[list.name].topicId = this.attrs.topic.id;
         state.lists[list.name].topics = result.topics.slice(0, list.max); // ensure max (per page is normally private)
+        this.scheduleRerender();
       }
     }).catch((e) => {
       state.lists[list.name].topicId = this.attrs.topic.id;
