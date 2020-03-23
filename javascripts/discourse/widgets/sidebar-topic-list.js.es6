@@ -59,9 +59,11 @@ export default createWidget("sidebar-topic-list", {
   },
   
   buildPlaceholderList(count, announcement) {
-    return Array(parseInt(count)).fill(0).map(() => {
-      return h(`li.animated-placeholder.placeholder-animation.${announcement ? '.announcement' : ''}`);
-    });
+    return Array.apply(null, Array(parseInt(count)))
+      .map(Number.prototype.valueOf, 0)
+      .map(() => {
+        return h(`li.animated-placeholder.placeholder-animation.${announcement ? '.announcement' : ''}`);
+      });
   },
     
   buildTopicList(topics, announcement) {
