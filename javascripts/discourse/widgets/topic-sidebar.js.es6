@@ -81,6 +81,8 @@ export default createWidget("topic-sidebar", {
       }
     }).catch((e) => {
       console.log(e);
+      state.lists[list.name].topicId = this.attrs.topic.id;
+      state.lists[list.name].topics = [];
     });
   }
 });
