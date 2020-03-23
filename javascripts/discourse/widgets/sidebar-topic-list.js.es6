@@ -47,10 +47,10 @@ export default createWidget("sidebar-topic-list", {
       }
       
       topicList = this.buildTopicList(list.topics, announcement);
-    } else if (!loadingTopics) {
-      topicList = [ h(`li.no-results`, h('span', I18n.t('choose_topic.none_found'))) ];
-    } else {
+    } else if (loadingTopics) {
       topicList = this.buildPlaceholderList(list.max, announcement);
+    } else if (!announcement) {
+      topicList = [ h(`li.no-results`, h('span', I18n.t('choose_topic.none_found'))) ];
     }
         
     result.push(h('ul', topicList));
