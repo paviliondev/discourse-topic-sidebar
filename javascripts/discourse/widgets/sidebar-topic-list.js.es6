@@ -2,6 +2,11 @@ import { createWidget } from "discourse/widgets/widget";
 import { ajax } from 'discourse/lib/ajax';
 import { h } from "virtual-dom";
 import DiscourseUrl from 'discourse/lib/url';
+import { emojiUnescape } from "discourse/lib/text";
+import { censor } from "pretty-text/censored-words";
+import { isRTL } from "discourse/lib/text-direction";
+import Site from "discourse/models/site";
+import RawHtml from "discourse/widgets/raw-html";
 
 function listKey(attrs) { 
   return `${attrs.topicId}-${attrs.list.name}`;
@@ -69,11 +74,25 @@ export default createWidget("sidebar-topic-list", {
           if (announcement && t.show_images && t.image_url) {
             return h('img', { attributes: { src: t.image_url, alt: t.fancy_title }});
           } else {
-            return t.fancy_title;
+            return new RawHtml({ html: this.buildTitleHtml(t) });
           }
         }
       }))
     })
+  },
+  
+  buildTitleHtml(topic) {
+    let fancyTitle = censor(
+      emojiUnescape(topic.fancy_title), 
+      Site.currentProp("censored_regexp")
+    );
+
+    if (this.siteSettings.support_mixed_text_direction) {
+      const titleDir = isRTL(fancyTitle) ? "rtl" : "ltr";
+      return `<span dir="${titleDir}">${fancyTitle}</span>`;
+    }
+    
+    return `<span>${fancyTitle}</span>`;
   },
   
   clickTopic(topic) {
