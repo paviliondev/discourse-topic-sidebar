@@ -31,11 +31,13 @@ export default createWidget("topic-sidebar", {
   loadTopics(state) {
     state.loading = true;
     
-    Promise.all(
-      topicLists.map((l) => this.fetchTopicList(l, state))
-    ).finally(() => {
-      state.loading = false;
-      this.scheduleRerender();
+    topicLists.forEach((l, idx, array) => {
+      this.fetchTopicList(l, state).then(() => {
+        if (idx === array.length - 1){ 
+          state.loading = false;
+          this.scheduleRerender(); 
+        }
+      });
     });
     
     this.scheduleRerender();
