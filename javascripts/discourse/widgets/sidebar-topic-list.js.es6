@@ -21,7 +21,8 @@ export default createWidget("sidebar-topic-list", {
   html(attrs, state) {
     const { list } = attrs;
     const { announcement } = state;
-    const hasTopics = list.topics.length;
+    const loadingTopics = list.topics === null;
+    const hasTopics = !loadingTopics && list.topics.length;
     
     let result = [];
     
@@ -41,6 +42,8 @@ export default createWidget("sidebar-topic-list", {
       }
       
       topicList = this.buildTopicList(list.topics, announcement);
+    } else if (!loadingTopics) {
+      topicList = [ h(`li.no-results`, h('span', I18n.t('choose_topic.none_found'))) ];
     } else {
       topicList = this.buildPlaceholderList(list.max, announcement);
     }
@@ -55,7 +58,7 @@ export default createWidget("sidebar-topic-list", {
       return h(`li.animated-placeholder.placeholder-animation.${announcement ? '.announcement' : ''}`);
     });
   },
-  
+    
   buildTopicList(topics, announcement) {
     return topics.map(t => {
       return h(`li${announcement ? '.announcement' : ''}`, this.attach("link", {

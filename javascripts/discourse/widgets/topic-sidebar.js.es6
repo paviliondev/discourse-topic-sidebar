@@ -6,7 +6,7 @@ const topicLists = settings.topic_lists.split('|').map(l => {
   return {
     name: parts[0],
     url: parts[1],
-    topics: [],
+    topics: null,
     max: parts[2] || 5
   }
 });
@@ -51,7 +51,7 @@ export default createWidget("topic-sidebar", {
     
     Object.keys(state.lists).forEach(name => {
       let list = state.lists[name];
-      if (list.topicId !== attrs.topic.id) list.topics = [];
+      if (list.topicId !== attrs.topic.id) list.topics = null;
       result.push(this.attach('sidebar-topic-list', {
         list,
         topicId: attrs.topic.id 
@@ -65,10 +65,11 @@ export default createWidget("topic-sidebar", {
     return this.store.findFiltered("topicList", {
       filter: list.url,
       params: {
-        status: 'listed',
+        status: 'open',
         per_page: list.max,
         no_definitions: true,
         random: true,
+        visible: true,
         announcement: list.name === 'Announcements'
       }
     }).then(result => {
