@@ -68,7 +68,6 @@ export default createWidget("topic-sidebar", {
       filter: list.url,
       params: {
         status: 'open',
-        per_page: list.max,
         no_definitions: true,
         random: true,
         visible: true,
