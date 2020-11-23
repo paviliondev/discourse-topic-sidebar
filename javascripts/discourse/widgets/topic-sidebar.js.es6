@@ -70,8 +70,7 @@ export default createWidget("topic-sidebar", {
         status: 'open',
         no_definitions: true,
         random: true,
-        visible: true,
-        announcement: list.name === 'Announcements'
+        visible: true
       }
     }).then(result => {
       if (result.topics) {
