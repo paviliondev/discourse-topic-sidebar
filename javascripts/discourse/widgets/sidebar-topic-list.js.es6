@@ -8,8 +8,23 @@ import { isRTL } from "discourse/lib/text-direction";
 import Site from "discourse/models/site";
 import RawHtml from "discourse/widgets/raw-html";
 
+
+const directlyLinkable = settings.direct_links.split('|');
+
+
 function listKey(attrs) { 
   return `${attrs.topicId}-${attrs.list.name}`;
+}
+
+function isDirectlyLinkable(url) {
+  if(url) {
+    let hostname = new URL(url).hostname;
+    if(directlyLinkable.includes(hostname)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 export default createWidget("sidebar-topic-list", {
@@ -28,7 +43,7 @@ export default createWidget("sidebar-topic-list", {
     const { announcement } = state;
     const loadingTopics = list.topics === null;
     const hasTopics = !loadingTopics && list.topics.length;
-    
+
     let result = [];
     
     if (!announcement) {
@@ -99,7 +114,16 @@ export default createWidget("sidebar-topic-list", {
   
   clickTopic(topic) {
     this.recordAnalytics({ topic_ids: [topic.id], url: topic.url }, 'click');
-    const url = this.state.announcement ? topic.ad_url : topic.url;
+    
+    let url = topic.url;
+
+    if(this.state.announcement) {
+      url = topic.ad_url;
+    }
+    else if(isDirectlyLinkable(topic.featured_link)) {
+      url = topic.featured_link;
+    }
+
     DiscourseUrl.routeTo(url);
   },
   

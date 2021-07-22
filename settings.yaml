@@ -4,3 +4,8 @@ topic_lists:
   default: ""
   description:
     en: "Comma separated title, query and max for each topic list."
+direct_links:
+  type: list
+  default: ""
+  description:
+    en: "Sites to directly link to from the sidebar instead of linking to the topic."
