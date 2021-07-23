@@ -27,6 +27,18 @@ function isDirectlyLinkable(url) {
   return false;
 }
 
+function getUrl(topic, announcement) {
+  let url = topic.url;
+
+  if(announcement) {
+    url = topic.ad_url;
+  } else if(isDirectlyLinkable(topic.featured_link)) {
+    url = topic.featured_link;
+  }
+
+  return url
+}
+
 export default createWidget("sidebar-topic-list", {
   tagName: "div.sidebar-topic-list",
   buildKey: (attrs) => `sidebar-topic-list-${listKey(attrs)}`,
@@ -87,6 +99,7 @@ export default createWidget("sidebar-topic-list", {
         className: `sidebar-topic`,
         action: "clickTopic",
         actionParam: t,
+        href: getUrl(t, announcement),
         contents: () => {
           if (announcement && t.show_images && t.image_url) {
             return h('img', { attributes: { src: t.image_url, alt: t.fancy_title }});
@@ -114,16 +127,7 @@ export default createWidget("sidebar-topic-list", {
   
   clickTopic(topic) {
     this.recordAnalytics({ topic_ids: [topic.id], url: topic.url }, 'click');
-    
-    let url = topic.url;
-
-    if(this.state.announcement) {
-      url = topic.ad_url;
-    }
-    else if(isDirectlyLinkable(topic.featured_link)) {
-      url = topic.featured_link;
-    }
-
+    const url = getUrl(topic, this.state.announcement)
     DiscourseUrl.routeTo(url);
   },
   
